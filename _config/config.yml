@@ -1,0 +1,25 @@
+---
+Name: fromholdio-featureimage
+---
+Page:
+  extensions:
+    - Fromholdio\FeatureImage\Extensions\FeatureImagePageExtension
+
+---
+Only:
+  moduleexists:
+    - 'innoweb/silverstripe-social-metadata'
+After: '#socialmeta'
+---
+Page:
+  extensions:
+    - Fromholdio\FeatureImage\Extensions\FeatureImagePageExtension
+
+---
+Except:
+  moduleexists:
+    - 'symbiote/silverstripe-multisites'
+---
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - Fromholdio\FeatureImage\Extensions\FeatureImageSiteConfigExtension
