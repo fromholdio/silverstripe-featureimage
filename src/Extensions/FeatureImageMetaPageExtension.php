@@ -23,11 +23,6 @@ class FeatureImageMetaPageExtension extends SiteTreeExtension
         self::MODE_CUSTOM => 'Upload/select custom image'
     ];
 
-    public function populateDefaults()
-    {
-        $this->getOwner()->MetaImageMode = $this->getOwner()->getDefaultMetaImageMode();
-    }
-
     public function getSocialMetaImage()
     {
         $image = null;
@@ -99,8 +94,8 @@ class FeatureImageMetaPageExtension extends SiteTreeExtension
 
     public function onBeforeWrite()
     {
-        if (!$this->getOwner()->MetaImageMode) {
-            $this->getOwner()->MetaImageMode = $this->getOwner()->getDefaultMetaImageMode();
+        if ($this->getOwner()->MetaImageMode === $this->getOwner()->getDefaultMetaImageMode()) {
+            $this->getOwner()->MetaImageMode = '';
         }
     }
 }

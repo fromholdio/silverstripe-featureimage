@@ -38,11 +38,6 @@ class FeatureImagePageExtension extends SiteTreeExtension
         self::MODE_SELF => 'Upload/select custom image'
     ];
 
-    public function populateDefaults()
-    {
-        $this->getOwner()->FeatureImageMode = $this->getOwner()->getDefaultFeatureImageMode();
-    }
-
     public function getInheritedFeatureImage()
     {
         $image = null;
@@ -193,8 +188,8 @@ class FeatureImagePageExtension extends SiteTreeExtension
 
     public function onBeforeWrite()
     {
-        if (!$this->getOwner()->FeatureImageMode) {
-            $this->getOwner()->FeatureImageMode = $this->getOwner()->getDefaultFeatureImageMode();
+        if ($this->getOwner()->FeatureImageMode === $this->getOwner()->getDefaultFeatureImageMode()) {
+            $this->getOwner()->FeatureImageMode = '';
         }
     }
 

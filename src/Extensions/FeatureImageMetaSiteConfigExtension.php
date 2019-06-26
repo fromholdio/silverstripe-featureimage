@@ -21,11 +21,6 @@ class FeatureImageMetaSiteConfigExtension extends DataExtension
         self::MODE_CUSTOM => 'Upload/select custom image'
     ];
 
-    public function populateDefaults()
-    {
-        $this->getOwner()->SocialMetaSiteImageMode = $this->getOwner()->getDefaultSocialMetaSiteImageMode();
-    }
-
     public function getSocialMetaSiteImage()
     {
         $image = null;
@@ -91,8 +86,8 @@ class FeatureImageMetaSiteConfigExtension extends DataExtension
 
     public function onBeforeWrite()
     {
-        if (!$this->getOwner()->SocialMetaSiteImageMode) {
-            $this->getOwner()->SocialMetaSiteImageMode = $this->getOwner()->getDefaultSocialMetaSiteImageMode();
+        if ($this->getOwner()->SocialMetaSiteImageMode === $this->getOwner()->getDefaultSocialMetaSiteImageMode()) {
+            $this->getOwner()->SocialMetaSiteImageMode = '';
         }
     }
 }
