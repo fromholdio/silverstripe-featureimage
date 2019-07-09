@@ -6,16 +6,18 @@ Page:
     - Fromholdio\FeatureImage\Extensions\FeatureImagePageExtension
 
 ---
+Name: fromholdio-featureimage-multisites
 Only:
   moduleexists:
     - 'innoweb/silverstripe-social-metadata'
 After: '#socialmeta'
 ---
-Page:
+Symbiote\Multisites\Model\Site:
   extensions:
-    - Fromholdio\FeatureImage\Extensions\FeatureImagePageExtension
+    - Fromholdio\FeatureImage\Extensions\FeatureImageSiteExtension
 
 ---
+Name: fromholdio-featureimage-nomultisites
 Except:
   moduleexists:
     - 'symbiote/silverstripe-multisites'

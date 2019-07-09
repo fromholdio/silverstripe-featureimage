@@ -62,7 +62,9 @@ class FeatureImagePageExtension extends SiteTreeExtension
         }
         if (!$image || $mode === self::MODE_SITE) {
             $config = $this->getOwner()->getFeatureImageConfig();
-            $image = $config->FeatureImage();
+            if ($config) {
+                $image = $config->FeatureImage();
+            }
         }
         if ($this->getOwner()->hasMethod('updateInheritedFeatureImage')) {
             $image = $this->getOwner()->updateInheritedFeatureImage($mode, $image);
@@ -93,7 +95,7 @@ class FeatureImagePageExtension extends SiteTreeExtension
                 $config = $site;
             }
         }
-        if (!$config) {
+        else {
             $config = SiteConfig::current_site_config();
         }
         if ($this->getOwner()->hasMethod('updateFeatureImageConfig')) {
