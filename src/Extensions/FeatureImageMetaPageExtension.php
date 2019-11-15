@@ -2,7 +2,7 @@
 
 namespace Fromholdio\FeatureImage\Extensions;
 
-use Innoweb\MetaCounter\Model\SiteTreeExtension;
+use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
