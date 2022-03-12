@@ -23,14 +23,15 @@ class FeatureImagePageExtension extends SiteTreeExtension
     ];
 
     private static $has_one = [
-        'FeatureImage' => Image::class
+        'LocalFeatureImage' => Image::class
     ];
 
     private static $owns = [
-        'FeatureImage'
+        'LocalFeatureImage'
     ];
 
     private static $feature_image_tab_path = 'Root.Main';
+    private static $feature_image_upload_folder = 'features';
 
     private static $feature_image_mode_labels = [
         self::MODE_PARENT => 'Inherit from parent page',
@@ -38,7 +39,7 @@ class FeatureImagePageExtension extends SiteTreeExtension
         self::MODE_SELF => 'Upload/select custom image'
     ];
 
-    public function getInheritedFeatureImage()
+    public function getFeatureImage()
     {
         $image = null;
         $mode = $this->getOwner()->FeatureImageMode;
@@ -46,17 +47,17 @@ class FeatureImagePageExtension extends SiteTreeExtension
             $mode = $this->getOwner()->getDefaultFeatureImageMode();
         }
         if ($mode === self::MODE_SELF) {
-            if ($this->getOwner()->FeatureImageID && $this->getOwner()->FeatureImage()->exists()) {
-                $image = $this->getOwner()->FeatureImage();
+            if ($this->getOwner()->LocalFeatureImageID && $this->getOwner()->LocalFeatureImage()->exists()) {
+                $image = $this->getOwner()->LocalFeatureImage();
             }
         } else if ($mode === self::MODE_PARENT) {
             if ($this->getOwner()->getIsFeatureImageMultisitesEnabled()) {
                 if ($this->getOwner()->ParentID !== $this->getOwner()->SiteID) {
-                    $image = $this->getOwner()->Parent()->getInheritedFeatureImage();
+                    $image = $this->getOwner()->Parent()->getFeatureImage();
                 }
             } else {
                 if ($this->getOwner()->ParentID) {
-                    $image = $this->getOwner()->Parent()->getInheritedFeatureImage();
+                    $image = $this->getOwner()->Parent()->getFeatureImage();
                 }
             }
         }
@@ -66,8 +67,8 @@ class FeatureImagePageExtension extends SiteTreeExtension
                 $image = $config->FeatureImage();
             }
         }
-        if ($this->getOwner()->hasMethod('updateInheritedFeatureImage')) {
-            $image = $this->getOwner()->updateInheritedFeatureImage($mode, $image);
+        if ($this->getOwner()->hasMethod('updateFeatureImage')) {
+            $image = $this->getOwner()->updateFeatureImage($mode, $image);
         }
         return $image;
     }
@@ -171,10 +172,15 @@ class FeatureImagePageExtension extends SiteTreeExtension
         if (isset($options[self::MODE_SELF])) {
             $imageField = Wrapper::create(
                 UploadField::create(
-                    'FeatureImage',
+                    'LocalFeatureImage',
                     $this->getOwner()->fieldLabel('FeatureImage')
                 )
             );
+            $folder = $this->getOwner()->config()->get('feature_image_upload_folder');
+            if (!empty($folder)) {
+                $imageField->setFolderName($folder);
+            }
+
             $fields[] = $imageField;
             if (count($options) > 1) {
                 $imageField

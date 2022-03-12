@@ -36,7 +36,7 @@ class FeatureImageMetaPageExtension extends SiteTreeExtension
             }
         }
         else if ($mode === self::MODE_FEATURE) {
-            $image = $this->getOwner()->getInheritedFeatureImage();
+            $image = $this->getOwner()->getFeatureImage();
         }
         else if ($mode === self::MODE_SITEMETA) {
             $config = $this->getOwner()->getSocialMetaConfig();

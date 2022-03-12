@@ -8,20 +8,27 @@ use SilverStripe\Forms\FieldList;
 
 class FeatureImageSiteExtension extends SiteTreeExtension
 {
+    private static $feature_image_tab_path = 'Root.FeatureImage';
+    private static $feature_image_upload_folder = 'features';
+
     public function updateSiteCMSFields(FieldList $fields)
     {
         $tabPath = $this->getOwner()->config()->get('feature_image_tab_path');
-        if ($tabPath) {
-
+        if ($tabPath)
+        {
             $fields->addFieldsToTab(
                 $tabPath,
                 [
-                    UploadField::create(
-                        'FeatureImage',
+                    $imageField = UploadField::create(
+                        'LocalFeatureImage',
                         $this->getOwner()->fieldLabel('FeatureImage')
                     )
                 ]
             );
+            $folder = $this->getOwner()->config()->get('feature_image_upload_folder');
+            if (!empty($folder)) {
+                $imageField->setFolderName($folder);
+            }
         }
     }
 }
