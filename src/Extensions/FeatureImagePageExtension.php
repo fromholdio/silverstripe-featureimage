@@ -47,8 +47,9 @@ class FeatureImagePageExtension extends SiteTreeExtension
             $mode = $this->getOwner()->getDefaultFeatureImageMode();
         }
         if ($mode === self::MODE_SELF) {
-            if ($this->getOwner()->LocalFeatureImageID && $this->getOwner()->LocalFeatureImage()->exists()) {
-                $image = $this->getOwner()->LocalFeatureImage();
+            $localImage = $this->getOwner()->LocalFeatureImage();
+            if ($localImage && $localImage->exists()) {
+                $image = $localImage;
             }
         } else if ($mode === self::MODE_PARENT) {
             if ($this->getOwner()->getIsFeatureImageMultisitesEnabled()) {
@@ -64,7 +65,7 @@ class FeatureImagePageExtension extends SiteTreeExtension
         if (!$image || $mode === self::MODE_SITE) {
             $config = $this->getOwner()->getFeatureImageConfig();
             if ($config) {
-                $image = $config->FeatureImage();
+                $image = $config->getFeatureImage();
             }
         }
         if ($this->getOwner()->hasMethod('updateFeatureImage')) {
@@ -170,8 +171,8 @@ class FeatureImagePageExtension extends SiteTreeExtension
             );
         }
         if (isset($options[self::MODE_SELF])) {
-            $imageField = Wrapper::create(
-                UploadField::create(
+            $imageWrapper = Wrapper::create(
+                $imageField = UploadField::create(
                     'LocalFeatureImage',
                     $this->getOwner()->fieldLabel('FeatureImage')
                 )
@@ -181,9 +182,9 @@ class FeatureImagePageExtension extends SiteTreeExtension
                 $imageField->setFolderName($folder);
             }
 
-            $fields[] = $imageField;
+            $fields[] = $imageWrapper;
             if (count($options) > 1) {
-                $imageField
+                $imageWrapper
                     ->displayIf('FeatureImageMode')
                     ->isEqualTo(self::MODE_SELF);
             }

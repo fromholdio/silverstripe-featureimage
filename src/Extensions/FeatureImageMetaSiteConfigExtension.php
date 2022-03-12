@@ -32,7 +32,7 @@ class FeatureImageMetaSiteConfigExtension extends DataExtension
             $image = $this->getOwner()->SocialMetaSiteImage();
         }
         else if ($mode === self::MODE_FEATURE) {
-            $image = $this->getOwner()->FeatureImage();
+            $image = $this->getOwner()->getFeatureImage();
         }
         if (!$image) {
             $image = $this->getOwner()->getDefaultSocialMetaSiteImage();

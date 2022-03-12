@@ -20,6 +20,12 @@ class FeatureImageSiteConfigExtension extends DataExtension
     private static $feature_image_tab_path = 'Root.Main';
     private static $feature_image_upload_folder = 'features';
 
+    public function getFeatureImage()
+    {
+        $image = $this->getOwner()->LocalFeatureImage();
+        return $image && $image->exists() ? $image : null;
+    }
+
     public function updateCMSFields(FieldList $fields)
     {
         $tabPath = $this->getOwner()->config()->get('feature_image_tab_path');
