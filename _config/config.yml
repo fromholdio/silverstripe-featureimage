@@ -5,6 +5,10 @@ Page:
   extensions:
     - Fromholdio\FeatureImage\Extensions\FeatureImagePageExtension
 
+SilverStripe\ORM\DatabaseAdmin:
+  extensions:
+    - Fromholdio\FeatureImage\Extensions\DatabaseAdminExtension
+
 ---
 Name: fromholdio-featureimage-multisites
 Only:
