@@ -6,6 +6,7 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\OptionsetField;
@@ -72,6 +73,15 @@ class FeatureImagePageExtension extends SiteTreeExtension
             $image = $this->getOwner()->updateFeatureImage($mode, $image);
         }
         return $image;
+    }
+
+    /**
+     * @deprecated 1.1.0 Use getFeatureImage() instead
+     */
+    public function getInheritedFeatureImage()
+    {
+        Deprecation::notice('1.1.0', 'Use getFeatureImage() instead');
+        return $this->getOwner()->getFeatureImage();
     }
 
     public function updateCMSFields(FieldList $fields)
