@@ -19,6 +19,7 @@ Only:
 Except:
   moduleexists:
     - 'symbiote/silverstripe-multisites'
+    - 'fromholdio/silverstripe-configured-multisites'
 After: '#socialmeta-nomultisites'
 ---
 SilverStripe\SiteConfig\SiteConfig:

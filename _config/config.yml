@@ -14,9 +14,22 @@ Name: fromholdio-featureimage-multisites
 Only:
   moduleexists:
     - 'innoweb/silverstripe-social-metadata'
+    - 'symbiote/silverstripe-multisites'
 After: '#socialmeta'
 ---
 Symbiote\Multisites\Model\Site:
+  extensions:
+    - Fromholdio\FeatureImage\Extensions\FeatureImageSiteExtension
+
+---
+Name: fromholdio-featureimage-configured-multisites
+Only:
+  moduleexists:
+    - 'innoweb/silverstripe-social-metadata'
+    - 'fromholdio/silverstripe-configured-multisites'
+After: '#socialmeta'
+---
+Fromholdio\ConfiguredMultisites\Model\Site:
   extensions:
     - Fromholdio\FeatureImage\Extensions\FeatureImageSiteExtension
 
@@ -25,6 +38,7 @@ Name: fromholdio-featureimage-nomultisites
 Except:
   moduleexists:
     - 'symbiote/silverstripe-multisites'
+    - 'fromholdio/silverstripe-configured-multisites'
 ---
 SilverStripe\SiteConfig\SiteConfig:
   extensions:

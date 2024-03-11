@@ -6,6 +6,7 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTreeExtension;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HiddenField;
@@ -214,6 +215,8 @@ class FeatureImagePageExtension extends SiteTreeExtension
 
     public function getIsFeatureImageMultisitesEnabled()
     {
-        return (bool) ClassInfo::exists('Symbiote\Multisites\Multisites');
+        $manifest = ModuleLoader::inst()->getManifest();
+        return ($manifest->moduleExists('symbiote/silverstripe-multisites')
+            || $manifest->moduleExists('fromholdio/silverstripe-configured-multisites'));
     }
 }
