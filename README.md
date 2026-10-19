@@ -4,7 +4,7 @@ Summary
 
 ## Requirements
 
-* [silverstripe-framework](https://github.com/silverstripe/silverstripe-framework) ^4 or ^5
+* [Silverstripe CMS](https://github.com/silverstripe/silverstripe-cms) ^6
 
 ## Installation
 
