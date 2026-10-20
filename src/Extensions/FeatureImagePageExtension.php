@@ -19,9 +19,9 @@ class FeatureImagePageExtension extends Extension
 {
 
     const MODE_SITE = 'site';
-    
+
     const MODE_PARENT = 'parent';
-    
+
     const MODE_SELF = 'self';
 
     private static array $db = [
@@ -37,7 +37,7 @@ class FeatureImagePageExtension extends Extension
     ];
 
     private static string $feature_image_tab_path = 'Root.Main';
-    
+
     private static string $feature_image_upload_folder = 'features';
 
     private static array $feature_image_mode_labels = [
@@ -53,7 +53,7 @@ class FeatureImagePageExtension extends Extension
         if (!$mode) {
             $mode = $this->getOwner()->getDefaultFeatureImageMode();
         }
-        
+
         if ($mode === self::MODE_SELF) {
             $localImage = $this->getOwner()->LocalFeatureImage();
             if ($localImage && $localImage->exists()) {
@@ -70,7 +70,7 @@ class FeatureImagePageExtension extends Extension
                 }
             }
         }
-        
+
         if (!$image || $mode === self::MODE_SITE) {
             $config = $this->getOwner()->getFeatureImageConfig();
             if ($config) {
@@ -81,7 +81,7 @@ class FeatureImagePageExtension extends Extension
         if ($this->getOwner()->hasMethod('updateFeatureImage')) {
             return $this->getOwner()->updateFeatureImage($mode, $image);
         }
-        
+
         return $image;
     }
 
@@ -96,13 +96,17 @@ class FeatureImagePageExtension extends Extension
 
     public function updateCMSFields(FieldList $fields): void
     {
+        $fields->removeByName([
+            'FeatureImageMode',
+            'LocalFeatureImage',
+        ]);
         $tabPath = $this->getOwner()->config()->get('feature_image_tab_path');
         $imageFields = $this->getOwner()->getFeatureImageCMSFieldsArray();
         if ($tabPath && count($imageFields) > 0) {
             foreach ($imageFields as $imageField) {
                 $fields->addFieldToTab($tabPath, $imageField);
             }
-            
+
             if (!$this->getOwner()->FeatureImageMode) {
                 $this->getOwner()->FeatureImageMode = $this->getOwner()->getDefaultFeatureImageMode();
             }
@@ -124,7 +128,7 @@ class FeatureImagePageExtension extends Extension
         if ($this->getOwner()->hasMethod('updateFeatureImageConfig')) {
             return $this->getOwner()->updateFeatureImageConfig($config);
         }
-        
+
         return $config;
     }
 
@@ -144,7 +148,7 @@ class FeatureImagePageExtension extends Extension
         if ($this->getOwner()->hasMethod('updateDefaultFeatureImageMode')) {
             return $this->getOwner()->updateDefaultFeatureImageMode($mode);
         }
-        
+
         return $mode;
     }
 
@@ -160,7 +164,7 @@ class FeatureImagePageExtension extends Extension
                 if (isset($options[self::MODE_SITE])) {
                     unset($options[self::MODE_SITE]);
                 }
-                
+
                 if (isset($options[self::MODE_PARENT])) {
                     unset($options[self::MODE_PARENT]);
                 }
@@ -174,7 +178,7 @@ class FeatureImagePageExtension extends Extension
         if ($this->getOwner()->hasMethod('updateFeatureImageModeOptions')) {
             return $this->getOwner()->updateFeatureImageModeOptions($options);
         }
-        
+
         return $options;
     }
 
@@ -192,7 +196,7 @@ class FeatureImagePageExtension extends Extension
                 $options
             );
         }
-        
+
         if (isset($options[self::MODE_SELF])) {
             $imageWrapper = Wrapper::create(
                 $imageField = UploadField::create(
@@ -216,7 +220,7 @@ class FeatureImagePageExtension extends Extension
         if ($this->getOwner()->hasMethod('updateFeatureImageCMSFieldsArray')) {
             return $this->getOwner()->updateFeatureImageCMSFieldsArray($fields);
         }
-        
+
         return $fields;
     }
 
