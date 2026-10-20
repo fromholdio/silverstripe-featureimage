@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fromholdio\FeatureImage\Extensions;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\CMS\Model\SiteTreeExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 
-class FeatureImageSiteExtension extends SiteTreeExtension
+class FeatureImageSiteExtension extends Extension
 {
-    public function updateSiteCMSFields(FieldList $fields)
+    public function updateSiteCMSFields(FieldList $fields): void
     {
         $tabPath = $this->getOwner()->config()->get('feature_image_tab_path');
-        if ($tabPath)
-        {
+        if ($tabPath) {
             $fields->addFieldsToTab(
                 $tabPath,
                 [

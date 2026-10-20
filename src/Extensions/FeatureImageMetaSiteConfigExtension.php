@@ -1,22 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fromholdio\FeatureImage\Extensions;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\OptionsetField;
-use SilverStripe\ORM\DataExtension;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
-class FeatureImageMetaSiteConfigExtension extends DataExtension
+class FeatureImageMetaSiteConfigExtension extends Extension
 {
     const MODE_FEATURE = 'feature';
+
     const MODE_CUSTOM = 'custom';
 
-    private static $db = [
+    private static array $db = [
         'SocialMetaSiteImageMode' => 'Varchar'
     ];
 
-    private static $social_meta_site_image_mode_labels = [
+    private static array $social_meta_site_image_mode_labels = [
         self::MODE_FEATURE => 'Use site feature image',
         self::MODE_CUSTOM => 'Upload/select custom image'
     ];
@@ -28,25 +32,28 @@ class FeatureImageMetaSiteConfigExtension extends DataExtension
         if (!$mode) {
             $mode = $this->getOwner()->getDefaultSocialMetaSiteImageMode();
         }
+
         if ($mode === self::MODE_CUSTOM) {
             $image = $this->getOwner()->SocialMetaSiteImage();
-        }
-        else if ($mode === self::MODE_FEATURE) {
+        } elseif ($mode === self::MODE_FEATURE) {
             $image = $this->getOwner()->getFeatureImage();
         }
+
         if (!$image) {
             $image = $this->getOwner()->getDefaultSocialMetaSiteImage();
         }
+
         if ($this->getOwner()->hasMethod('updateSocialMetaSiteImage')) {
-            $image = $this->getOwner()->updateSocialMetaSiteImage($mode, $image);
+            return $this->getOwner()->updateSocialMetaSiteImage($mode, $image);
         }
+
         return $image;
     }
 
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
         $imageField = $fields->dataFieldByName('SocialMetaSiteImage');
-        if (!$imageField) {
+        if (!$imageField instanceof FormField) {
             return;
         }
 
@@ -74,7 +81,7 @@ class FeatureImageMetaSiteConfigExtension extends DataExtension
         $fields->insertAfter('SocialMetaSiteImageMode', $imageWrapper);
     }
 
-    public function getDefaultSocialMetaSiteImageMode()
+    public function getDefaultSocialMetaSiteImageMode(): string
     {
         return self::MODE_FEATURE;
     }
@@ -84,7 +91,7 @@ class FeatureImageMetaSiteConfigExtension extends DataExtension
         return $this->getOwner()->config()->get('social_meta_site_image_mode_labels');
     }
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         if ($this->getOwner()->SocialMetaSiteImageMode === $this->getOwner()->getDefaultSocialMetaSiteImageMode()) {
             $this->getOwner()->SocialMetaSiteImageMode = '';

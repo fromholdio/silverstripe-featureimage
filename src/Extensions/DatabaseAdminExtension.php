@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fromholdio\FeatureImage\Extensions;
 
 use Page;
@@ -9,7 +11,7 @@ use SilverStripe\ORM\DB;
 
 class DatabaseAdminExtension extends Extension
 {
-    public function onAfterBuild($quiet, $populate, $testMode)
+    public function onAfterBuild($quiet, $populate, $testMode): void
     {
         // migrates has_one FeatureImage to LocalFeatureImage
         $table = Page::config()->get('table_name');
@@ -47,6 +49,7 @@ class DatabaseAdminExtension extends Extension
                     }
                 }
             }
+
             // remove old column
             $query = "ALTER TABLE $table DROP COLUMN FeatureImageID";
             DB::query($query);
@@ -80,6 +83,7 @@ class DatabaseAdminExtension extends Extension
                     }
                 }
             }
+
             // remove old column
             $query = "ALTER TABLE $table DROP COLUMN FeatureImageID";
             DB::query($query);
@@ -113,6 +117,7 @@ class DatabaseAdminExtension extends Extension
                     }
                 }
             }
+
             // remove old column
             $query = "ALTER TABLE $table DROP COLUMN FeatureImageID";
             DB::query($query);

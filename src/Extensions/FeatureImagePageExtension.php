@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fromholdio\FeatureImage\Extensions;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
-use SilverStripe\CMS\Model\SiteTreeExtension;
-use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Extension;
 use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
@@ -14,28 +15,32 @@ use SilverStripe\Forms\OptionsetField;
 use SilverStripe\SiteConfig\SiteConfig;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
-class FeatureImagePageExtension extends SiteTreeExtension
+class FeatureImagePageExtension extends Extension
 {
+
     const MODE_SITE = 'site';
+
     const MODE_PARENT = 'parent';
+
     const MODE_SELF = 'self';
 
-    private static $db = [
+    private static array $db = [
         'FeatureImageMode' => 'Varchar'
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'LocalFeatureImage' => Image::class
     ];
 
-    private static $owns = [
+    private static array $owns = [
         'LocalFeatureImage'
     ];
 
-    private static $feature_image_tab_path = 'Root.Main';
-    private static $feature_image_upload_folder = 'features';
+    private static string $feature_image_tab_path = 'Root.Main';
 
-    private static $feature_image_mode_labels = [
+    private static string $feature_image_upload_folder = 'features';
+
+    private static array $feature_image_mode_labels = [
         self::MODE_PARENT => 'Inherit from parent page',
         self::MODE_SITE => 'Use site feature image',
         self::MODE_SELF => 'Upload/select custom image'
@@ -48,12 +53,13 @@ class FeatureImagePageExtension extends SiteTreeExtension
         if (!$mode) {
             $mode = $this->getOwner()->getDefaultFeatureImageMode();
         }
+
         if ($mode === self::MODE_SELF) {
             $localImage = $this->getOwner()->LocalFeatureImage();
             if ($localImage && $localImage->exists()) {
                 $image = $localImage;
             }
-        } else if ($mode === self::MODE_PARENT) {
+        } elseif ($mode === self::MODE_PARENT) {
             if ($this->getOwner()->getIsFeatureImageMultisitesEnabled()) {
                 if ($this->getOwner()->ParentID !== $this->getOwner()->SiteID) {
                     $image = $this->getOwner()->Parent()->getFeatureImage();
@@ -64,15 +70,18 @@ class FeatureImagePageExtension extends SiteTreeExtension
                 }
             }
         }
+
         if (!$image || $mode === self::MODE_SITE) {
             $config = $this->getOwner()->getFeatureImageConfig();
             if ($config) {
                 $image = $config->getFeatureImage();
             }
         }
+
         if ($this->getOwner()->hasMethod('updateFeatureImage')) {
-            $image = $this->getOwner()->updateFeatureImage($mode, $image);
+            return $this->getOwner()->updateFeatureImage($mode, $image);
         }
+
         return $image;
     }
 
@@ -85,14 +94,19 @@ class FeatureImagePageExtension extends SiteTreeExtension
         return $this->getOwner()->getFeatureImage();
     }
 
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
+        $fields->removeByName([
+            'FeatureImageMode',
+            'LocalFeatureImage',
+        ]);
         $tabPath = $this->getOwner()->config()->get('feature_image_tab_path');
         $imageFields = $this->getOwner()->getFeatureImageCMSFieldsArray();
         if ($tabPath && count($imageFields) > 0) {
             foreach ($imageFields as $imageField) {
                 $fields->addFieldToTab($tabPath, $imageField);
             }
+
             if (!$this->getOwner()->FeatureImageMode) {
                 $this->getOwner()->FeatureImageMode = $this->getOwner()->getDefaultFeatureImageMode();
             }
@@ -107,13 +121,14 @@ class FeatureImagePageExtension extends SiteTreeExtension
             if ($site && $site->exists()) {
                 $config = $site;
             }
-        }
-        else {
+        } else {
             $config = SiteConfig::current_site_config();
         }
+
         if ($this->getOwner()->hasMethod('updateFeatureImageConfig')) {
-            $config = $this->getOwner()->updateFeatureImageConfig($config);
+            return $this->getOwner()->updateFeatureImageConfig($config);
         }
+
         return $config;
     }
 
@@ -123,17 +138,17 @@ class FeatureImagePageExtension extends SiteTreeExtension
         if ($this->getOwner()->getIsFeatureImageMultisitesEnabled()) {
             if ($this->getOwner()->ParentID === $this->getOwner()->SiteID) {
                 $mode = self::MODE_SITE;
-            }
-            else if ($this->getOwner()->ID === $this->getOwner()->SiteID) {
+            } elseif ($this->getOwner()->ID === $this->getOwner()->SiteID) {
                 $mode = self::MODE_SELF;
             }
-        }
-        else if (!$this->getOwner()->ParentID) {
+        } elseif (!$this->getOwner()->ParentID) {
             $mode = self::MODE_SITE;
         }
+
         if ($this->getOwner()->hasMethod('updateDefaultFeatureImageMode')) {
-            $mode = $this->getOwner()->updateDefaultFeatureImageMode($mode);
+            return $this->getOwner()->updateDefaultFeatureImageMode($mode);
         }
+
         return $mode;
     }
 
@@ -145,24 +160,25 @@ class FeatureImagePageExtension extends SiteTreeExtension
                 if (isset($options[self::MODE_PARENT])) {
                     unset($options[self::MODE_PARENT]);
                 }
-            }
-            else if ($this->getOwner()->ID === $this->getOwner()->SiteID) {
+            } elseif ($this->getOwner()->ID === $this->getOwner()->SiteID) {
                 if (isset($options[self::MODE_SITE])) {
                     unset($options[self::MODE_SITE]);
                 }
+
                 if (isset($options[self::MODE_PARENT])) {
                     unset($options[self::MODE_PARENT]);
                 }
             }
-        }
-        else if (!$this->getOwner()->ParentID) {
+        } elseif (!$this->getOwner()->ParentID) {
             if (isset($options[self::MODE_PARENT])) {
                 unset($options[self::MODE_PARENT]);
             }
         }
+
         if ($this->getOwner()->hasMethod('updateFeatureImageModeOptions')) {
-            $options = $this->getOwner()->updateFeatureImageModeOptions($options);
+            return $this->getOwner()->updateFeatureImageModeOptions($options);
         }
+
         return $options;
     }
 
@@ -173,14 +189,14 @@ class FeatureImagePageExtension extends SiteTreeExtension
         $options = $this->getOwner()->getFeatureImageModeOptions();
         if (count($options) === 1) {
             $fields[] = HiddenField::create('FeatureImageMode', false);
-        }
-        else if (count($options) > 1) {
+        } elseif (count($options) > 1) {
             $fields[] = OptionsetField::create(
                 'FeatureImageMode',
                 $this->getOwner()->fieldLabel('FeatureImageMode'),
                 $options
             );
         }
+
         if (isset($options[self::MODE_SELF])) {
             $imageWrapper = Wrapper::create(
                 $imageField = UploadField::create(
@@ -200,20 +216,22 @@ class FeatureImagePageExtension extends SiteTreeExtension
                     ->isEqualTo(self::MODE_SELF);
             }
         }
+
         if ($this->getOwner()->hasMethod('updateFeatureImageCMSFieldsArray')) {
-            $fields = $this->getOwner()->updateFeatureImageCMSFieldsArray($fields);
+            return $this->getOwner()->updateFeatureImageCMSFieldsArray($fields);
         }
+
         return $fields;
     }
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         if ($this->getOwner()->FeatureImageMode === $this->getOwner()->getDefaultFeatureImageMode()) {
             $this->getOwner()->FeatureImageMode = '';
         }
     }
 
-    public function getIsFeatureImageMultisitesEnabled()
+    public function getIsFeatureImageMultisitesEnabled(): bool
     {
         $manifest = ModuleLoader::inst()->getManifest();
         return ($manifest->moduleExists('symbiote/silverstripe-multisites')
